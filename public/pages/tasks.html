@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tasks - Collaborative Editor</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="/styles/tailwind.css" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+
+   <!-- Navbar -->
+   <nav class="bg-white shadow-md">
+    <div class="container mx-auto p-4 flex justify-between items-center">
+      <div class="flex gap-6">
+        <a href="/dashboard" class="text-indigo-600 text-xl font-bold flex items-center">
+          <i class="fas fa-edit mr-2"></i>
+        </a>
+        <a href="/mydocuments" class="text-indigo-400 text-sm font-medium flex items-center hover:text-indigo-600">
+          <i class="fas fa-file mr-2"></i> My Documents
+        </a>
+        <a href="/teams" class="text-indigo-400 text-sm font-medium flex items-center hover:text-indigo-600">
+          <i class="fas fa-users mr-2"></i> Teams
+        </a>
+        <a href="/tasks" class="text-indigo-400 text-sm font-medium flex items-center hover:text-indigo-600">
+          <i class="fas fa-tasks mr-2"></i> Tasks
+        </a>
+      </div>
+      <a href="/auth/logout" class="text-indigo-600 font-semibold hover:text-indigo-800 transition">
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+      </a>
+    </div>
+  </nav>
+
+  <!-- Tasks Page Content -->
+  <main class="w-full m-auto p-4 h-full flex flex-col">
+    <div class="container mx-auto p-4">
+      <div class="bg-white p-8 rounded-2xl shadow-2xl space-y-8">
+        <h1 class="text-4xl font-extrabold text-gray-900 text-center">Tasks</h1>
+        <p class="text-gray-600 text-center">Track and manage your tasks</p>
+
+        <div class="flex flex-col gap-6">
+          <!-- Your Tasks -->
+          <div class="p-6 bg-gray-50 shadow-md rounded-lg hover:shadow-lg transition transform">
+            <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-tasks mr-2"></i> My Tasks
+            </h2>
+            <ul class="text-gray-600 mt-4 space-y-4">
+              <li class="flex items-center justify-between">
+                <label class="flex items-center space-x-2">
+                  <input type="checkbox" class="appearance-none h-6 w-6 border border-gray-300 rounded-md bg-white checked:bg-indigo-600 checked:border-transparent focus:outline-none transition duration-200 cursor-pointer">
+                  <span class="text-gray-800">Update Homepage Design</span>
+                </label>
+                <div class="text-sm text-gray-500 flex flex-col items-end">
+                  <span class="text-gray-400">Due: 12/09/2024</span>
+                </div>
+              </li>
+              <li class="flex items-center justify-between">
+                <label class="flex items-center space-x-2">
+                  <input type="checkbox" class="appearance-none h-6 w-6 border border-gray-300 rounded-md bg-white checked:bg-indigo-600 checked:border-transparent focus:outline-none transition duration-200 cursor-pointer">
+                  <span class="text-gray-800">Complete Sprint Planning</span>
+                </label>
+                <div class="text-sm text-gray-500 flex flex-col items-end">
+                  <span class="text-gray-400">Due: 14/09/2024</span>
+                </div>
+              </li>
+            </ul>
+
+            <div class="flex items-center justify-between mt-6">
+              <span class="w-1/5 border-b"></span>
+              <!-- Add Task Button -->
+              <div class="text-center">
+                <a href="#" class="inline-block bg-green-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-green-600 transition duration-300">
+                  <i class="fas fa-plus-circle mr-2"></i> Add New Task
+                </a>
+              </div>
+              <span class="w-1/5 border-b"></span>
+            </div>
+            
+          </div>
+
+          <!-- Team Tasks -->
+          <div class="p-6 bg-gray-50 shadow-md rounded-lg hover:shadow-lg transition transform">
+            <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+              <i class="fas fa-tasks mr-2"></i> Team Tasks
+            </h2>
+            <ul class="text-gray-600 mt-4 space-y-4">
+              <li class="flex items-center justify-between">
+                <label class="flex items-center space-x-2">
+                  <input type="checkbox" class="appearance-none h-6 w-6 border border-gray-300 rounded-md bg-white checked:bg-indigo-600 checked:border-transparent focus:outline-none transition duration-200 cursor-pointer">
+                  <span class="text-gray-800">Update Homepage Design</span>
+                </label>
+                <div class="text-sm text-gray-500 flex flex-col items-end">
+                  <span>- Team name -</span>
+                  <span class="text-gray-400">Due: 12/09/2024</span>
+                </div>
+              </li>
+              <li class="flex items-center justify-between">
+                <label class="flex items-center space-x-2">
+                  <input type="checkbox" class="appearance-none h-6 w-6 border border-gray-300 rounded-md bg-white checked:bg-indigo-600 checked:border-transparent focus:outline-none transition duration-200 cursor-pointer">
+                  <span class="text-gray-800">Complete Sprint Planning</span>
+                </label>
+                <div class="text-sm text-gray-500 flex flex-col items-end">
+                  <span>- Team name -</span>
+                  <span class="text-gray-400">Due: 14/09/2024</span>
+                </div>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- Add more task sections here -->
+        </div>
+
+        
+      </div>
+    </div>
+
+    <!-- Under Development Modal -->
+    <!-- <div id="under-development-modal" class="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+      <div class="bg-white p-6 rounded-lg shadow-lg max-w-lg mx-auto text-center">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Feature Under Development</h2>
+        <p class="text-gray-600 mb-6">This feature is currently being developed. Please check back later.</p>
+        <a href="/dashboard"><button class="bg-indigo-500 text-white px-4 py-2 rounded hover:bg-indigo-600">Return to Dashboard</button></a>
+      </div>
+    </div> -->
+  </main>
+
+  <script>
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
+    document.querySelector('a[href="/tasks"]').classList.add('text-indigo-600')
+    document.querySelector('a[href="/tasks"]').classList.remove('text-indigo-400')
+
+    document.querySelector('nav a[href="/dashboard"]').innerHTML += ` ${currentUser.name}`
+
+  </script>
+</body>
+</html>

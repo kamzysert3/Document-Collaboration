@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Documents - Collaborative Editor</title>
+  <link href="/styles/tailwind.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 min-h-screen">
+
+   <!-- Navbar -->
+   <nav class="bg-white shadow-md">
+    <div class="container mx-auto p-4 flex justify-between items-center">
+      <div class="flex gap-6">
+        <a href="/dashboard" class="text-indigo-600 text-xl font-bold flex items-center">
+          <i class="fas fa-edit mr-2"></i> 
+        </a>
+        <a href="/mydocuments" class="text-indigo-400 text-sm font-medium flex items-center hover:text-indigo-600">
+          <i class="fas fa-file mr-2"></i> My Documents
+        </a>
+        <a href="/teams" class="text-indigo-400 text-sm font-medium flex items-center hover:text-indigo-600">
+          <i class="fas fa-users mr-2"></i> Teams
+        </a>
+        <a href="/tasks" class="text-indigo-400 text-sm font-medium flex items-center hover:text-indigo-600">
+          <i class="fas fa-tasks mr-2"></i> Tasks
+        </a>
+      </div>
+      <a href="/auth/logout" class="text-indigo-600 font-semibold hover:text-indigo-800 transition">
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+      </a>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-4">
+    <div class="bg-white p-4 rounded-2xl shadow-2xl space-y-4">
+      <div class="text-center">
+        <h1 class="text-4xl font-extrabold text-gray-900">My Documents</h1>
+        <p class="text-gray-600 mt-4">Manage your collaborative documents below</p>
+      </div>
+
+      <div class="my-documents grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+      <div class="text-center mt-8">
+        <a href="#" id="create-document" class="w-full inline-block bg-green-500 text-white py-3 rounded-lg text-lg font-semibold hover:bg-green-600 transition duration-300">
+          <i class="fas fa-plus-circle mr-2"></i> Create New Document
+        </a>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 mt-10 rounded-2xl shadow-2xl space-y-4 mt-2">
+      <div class="text-center">
+        <h2 class="text-3xl font-extrabold text-gray-900">Shared Documents</h2>
+        <p class="text-gray-600 mt-4">View and collaborate on documents shared with you</p>
+      </div>
+  
+      <div class="shared-documents grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+  
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="error-modal" class="fixed flex inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
+    <div class="bg-white rounded-lg p-6 max-w-md mx-auto shadow-xl">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4" id="error-modal-header">Error</h2>
+      <p class="text-gray-600 mb-6" id="error-modal-message">An error occurred.</p>
+      <button class="bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 transition" id="close-error-modal">Close</button>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div id="confirm-modal" class="fixed flex inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
+    <div class="bg-white rounded-lg p-6 max-w-md mx-auto shadow-xl">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">Confirm Action</h2>
+      <p class="text-gray-600 mb-6" id="confirm-modal-message">Are you sure you want to proceed?</p>
+      <div class="flex justify-between">
+        <button class="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition" id="confirm-action">Yes</button>
+        <button class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 transition" id="cancel-action">No</button>
+      </div>
+    </div>
+  </div>
+
+
+  <script>
+    const currentUser = JSON.parse(sessionStorage.getItem('user'));
+    document.querySelector('a[href="/mydocuments"]').classList.add('text-indigo-600')
+    document.querySelector('a[href="/mydocuments"]').classList.remove('text-indigo-400')
+
+    document.querySelector('nav a[href="/dashboard"]').innerHTML += ` ${currentUser.name}`
+
+    function showModal(modalId, message) {
+      const modal = document.getElementById(modalId);
+      const messageElement = document.getElementById(`${modalId}-message`);
+      messageElement.innerText = message;
+      modal.classList.remove('hidden');
+    }
+
+    function hideModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    document.getElementById('close-error-modal').addEventListener('click', () => hideModal('error-modal'));
+
+    document.getElementById('cancel-action').addEventListener('click', () => hideModal('confirm-modal'));
+
+    fetch('/api/get-document', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        email: currentUser.email
+      })
+    })
+     .then(response => response.json())
+     .then(data => {
+      const documentList = document.querySelector('.my-documents');
+      if(data.documents.length > 0) {
+        data.documents.forEach(document => {
+          const mydocument = `<div class="flex relative">
+                                <a href="/document/${document.id}" class="w-full p-6 bg-gray-50 shadow-md rounded-lg hover:shadow-lg hover:bg-gray-100 transition transform relative">
+                                  <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+                                      <i class="far fa-file-alt mr-2"></i> ${document.title}
+                                  </h2>
+                                  <p class="text-gray-600 mt-2 flex items-center">
+                                      <i class="fas fa-users mr-2"></i> Collaborators: ${document.collaborators.map(user => user.name === currentUser.name ? 'You' : user.name).join(', ')}
+                                  </p>
+                                </a>
+                                <!-- Delete Button -->
+                                <button onclick="deleteDocument(${document.id})" class="absolute top-4 right-4 p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                              </div>`;
+        documentList.innerHTML += mydocument;
+        });
+      } else {
+        documentList.classList.remove('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-6')
+        documentList.classList.add('flex', 'justify-center', 'items-center')
+        documentList.innerHTML = '<p></p><p class="text-center text-gray-600">No documents found</p><p></p>';
+      }
+    });
+
+    fetch('/api/get-shared-document', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify({
+        email: currentUser.email
+      })
+    })
+     .then(response => response.json())
+     .then(data => {
+      const documentList = document.querySelector('.shared-documents');
+      if(data.documents.length > 0) {
+        data.documents.forEach(document => {
+          const mydocument = `<div class="flex relative">
+                                <a href="/document/${document.id}" class="w-full p-6 bg-gray-50 shadow-md rounded-lg hover:shadow-lg hover:bg-gray-100 transition transform relative">
+                                  <h2 class="text-2xl font-semibold text-gray-800 flex items-center">
+                                      <i class="far fa-file-alt mr-2"></i> ${document.title}
+                                  </h2>
+                                  <p class="text-gray-600 mt-2 flex items-center">
+                                      <i class="fas fa-users mr-2"></i> Collaborators: ${document.collaborators.map(user => user.name === currentUser.name ? 'You' : user.name).join(', ')}
+                                  </p>
+                                </a>
+                              </div>`;
+        documentList.innerHTML += mydocument;
+        });
+      } else {
+        documentList.classList.remove('grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-6')
+        documentList.classList.add('flex', 'justify-center', 'items-center')
+        documentList.innerHTML = '<p></p><p class="text-center text-gray-600">No shared documents found</p><p></p>';
+      }
+    });
+
+    document.getElementById('create-document').addEventListener('click', async (e) => {
+      e.preventDefault();
+      fetch('/document', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({
+          userId: currentUser.userId
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if(data.success) {
+          window.location.href = data.redirect
+        } else {
+          showModal('error-modal','Failed to create new document');
+        }
+      })
+      .catch((err) => {
+        showModal('error-modal','An unexpected error occurred');
+        console.error('An unexpected error occurred:', err);
+      })
+    })
+
+    function deleteDocument(documentId) {
+      showModal('confirm-modal', 'Are you sure you want to delete this document?');
+
+      document.getElementById('confirm-action').addEventListener('click', () => {
+        hideModal('confirm-modal');
+        fetch(`/api/document/delete/${documentId}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+              userId: currentUser.userId
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+              showModal('error-modal', 'Document deleted successfully');
+              document.getElementById('close-error-modal').classList.add('hidden');
+              document.getElementById('error-modal-header').innerText = "Success";
+              setTimeout(() => location.reload(), 1500);
+            } else {
+              showModal('error-modal', 'Failed to delete the document');
+            }
+        })
+        .catch(error => {
+          console.error('Error deleting document:', error);
+          showModal('error-modal', 'An unexpected error occurred');
+        });
+      })
+    }
+
+  </script>
+</body>
+</html>
