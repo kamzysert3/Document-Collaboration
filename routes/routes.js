@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     res.sendFile(path.join(__dirname, '../public/pages', 'index.html'));
 });
 router.get('/register', async (req, res) => {
-    res.sendFile(path.join(__dirname, '../publi/pages', 'register.html'));
+    res.sendFile(path.join(__dirname, '../public/pages', 'register.html'));
 });
 router.get('/dashboard', authenticate, async (req, res) => {
     res.sendFile(path.join(__dirname, '../public/pages', 'dashboard.html'));

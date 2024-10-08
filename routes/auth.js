@@ -94,7 +94,6 @@ router.post('/login', async (req, res) => {
 // Logout a User
 router.get('/logout', (req, res) => {
     res.clearCookie('token', { httpOnly: true, secure: true, sameSite: 'strict' });
-    res.clearCookie('userId', { httpOnly: true, secure: true, sameSite: 'strict' });
     res.redirect('/');
 });
 
